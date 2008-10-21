@@ -10,6 +10,9 @@ from states import STATES
 
 class ElectionSim(object):
     def __init__(self):
+        self.SIMULATION_COUNT = 100
+        self.update = True
+        
         self.gladefile = 'election.glade'
         self.wTree = gtk.glade.XML(self.gladefile, 'mainWindow')
         
@@ -57,15 +60,17 @@ class ElectionSim(object):
         self.state_widgets[name][4].set_text('%s%%' % int(100-widget.get_value()))
     
     def update_projection(self):
+        if not self.update:
+            return
         obama_votes = 0
-        for i in xrange(1000):
+        for i in xrange(self.SIMULATION_COUNT):
             for slider, obama_box, obama_label, mccain_box, mccain_label in self.state_widgets.itervalues():
                 name = '_'.join(slider.get_name().rsplit('_')[:-1])
                 val = slider.get_value()
                 votes = STATES[name][1]
                 if val > random.uniform(0, 100):
                     obama_votes += votes
-        obama_votes = int(obama_votes / 1000)
+        obama_votes = int(obama_votes / self.SIMULATION_COUNT)
         self.wTree.get_widget('obama_count').set_text(str(obama_votes))
         self.wTree.get_widget('mccain_count').set_text(str(538-obama_votes))
     
@@ -90,6 +95,17 @@ class ElectionSim(object):
             self.state_widgets[name][idx].set_sensitive(True)
             self.state_widgets[name][0].set_value(50)
             self.state_widgets[name][0].set_sensitive(True)
+    
+    def overall_changed(self, widget):
+        self.update = False
+        value = widget.get_value()
+        self.wTree.get_widget('overall_obama').set_text('%s%%' % int(value))
+        self.wTree.get_widget('overall_mccain').set_text('%s%%' % (100 - int(value)))
+        for slider, obama_box, obama_label, mccain_box, mccain_label in self.state_widgets.itervalues():
+            if slider.get_property('sensitive'):
+                slider.set_value(value)
+        self.update = True
+        self.update_projection()
     
     def save(self, widget):
         data = {}
