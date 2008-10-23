@@ -12,7 +12,7 @@ from states import STATES
 
 class ElectionSim(object):
     def __init__(self):
-        self.SIMULATION_COUNT = 100
+        self.SIMULATION_COUNT = 500
         self.update = True
         
         self.gladefile = 'election.glade'
@@ -64,17 +64,21 @@ class ElectionSim(object):
     def update_projection(self):
         if not self.update:
             return
-        obama_votes = 0
+        cand_wins = [0, 0]
         for i in xrange(self.SIMULATION_COUNT):
+            obama_votes = 0
             for slider, obama_box, obama_label, mccain_box, mccain_label in self.state_widgets.itervalues():
                 name = '_'.join(slider.get_name().rsplit('_')[:-1])
                 val = slider.get_value()
                 votes = STATES[name][1]
                 if val > random.uniform(0, 100):
                     obama_votes += votes
-        obama_votes = int(obama_votes / self.SIMULATION_COUNT)
-        self.wTree.get_widget('obama_count').set_text(str(obama_votes))
-        self.wTree.get_widget('mccain_count').set_text(str(538-obama_votes))
+            if obama_votes >= 270:
+                cand_wins[0] += 1
+            if obama_votes < 269:
+                cand_wins[1] += 1
+        self.wTree.get_widget('obama_count').set_text("%s%%" % int(100 * float(cand_wins[0])/self.SIMULATION_COUNT))
+        self.wTree.get_widget('mccain_count').set_text("%s%%" % int(100 * float(cand_wins[1])/self.SIMULATION_COUNT))
     
     def winner_determined(self, widget):
         name = '_'.join(widget.get_name().rsplit('_')[:-1])
