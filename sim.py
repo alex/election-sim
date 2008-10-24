@@ -113,6 +113,18 @@ class ElectionSim(object):
         self.update = True
         self.update_projection()
     
+    def reset(self, widget):
+        self.update = False
+        for slider, obama_box, obama_label, mccain_box, mccain_label in self.state_widgets.itervalues():
+            slider.set_sensitive(True)
+            slider.set_value(50)
+            obama_box.set_sensitive(True)
+            mccain_box.set_sensitive(True)
+            obama_box.set_active(False)
+            mccain_box.set_active(False)
+        self.update = True
+        self.update_projection()
+    
     def save(self, widget):
         data = {}
         for slider, obama_box, obama_label, mccain_box, mccain_label in self.state_widgets.itervalues():

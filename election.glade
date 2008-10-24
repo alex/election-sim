@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Tue Oct 21 16:58:24 2008 -->
+<!--Generated with glade3 3.4.5 on Thu Oct 23 23:56:14 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainWindow">
     <property name="visible">True</property>
@@ -22,6 +22,15 @@
                   <widget class="GtkMenu" id="menu1">
                     <property name="visible">True</property>
                     <child>
+                      <widget class="GtkImageMenuItem" id="Reset">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">gtk-refresh</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <signal name="activate" handler="reset"/>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkImageMenuItem" id="Save">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">gtk-save</property>
@@ -40,7 +49,7 @@
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkSeparatorMenuItem" id="separatormenuitem1">
+                      <widget class="GtkSeparatorMenuItem" id="">
                         <property name="visible">True</property>
                       </widget>
                     </child>
