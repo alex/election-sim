@@ -149,4 +149,9 @@ def main():
     gtk.main()
 
 if __name__ == '__main__':
+    try:
+        import psyco
+        psyco.main()
+    except ImportError:
+        print "Psyco isn't installed, if you install it, the simulations might go faster"
     main()
