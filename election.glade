@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Oct 23 23:56:14 2008 -->
+<!--Generated with glade3 3.4.5 on Fri Oct 24 15:53:28 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainWindow">
     <property name="visible">True</property>
@@ -139,7 +139,7 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkHScale" id="hscale1">
+              <widget class="GtkHScale" id="overall_slider">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="adjustment">50 0 100 0 0 0</property>

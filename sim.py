@@ -127,6 +127,7 @@ class ElectionSim(object):
     
     def save(self, widget):
         data = {}
+        data['__all__'] = self.wTree.get_widget('overall_slider').get_value()
         for slider, obama_box, obama_label, mccain_box, mccain_label in self.state_widgets.itervalues():
             name = '_'.join(slider.get_name().rsplit('_')[:-1])
             data[name] = (slider.get_value(), obama_box.get_active(), mccain_box.get_active())
@@ -134,6 +135,7 @@ class ElectionSim(object):
     
     def load(self, widget):
         data = pickle.load(open('data.txt'))
+        self.wTree.get_widget('overall_slider').set_value(data.pop('__all__', 50))
         for name, (value, obama, mccain) in data.iteritems():
             self.state_widgets[name][0].set_value(value)
             self.state_widgets[name][1].set_active(obama)
