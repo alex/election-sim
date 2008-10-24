@@ -151,7 +151,7 @@ def main():
 if __name__ == '__main__':
     try:
         import psyco
-        psyco.main()
+        psyco.full()
     except ImportError:
         print "Psyco isn't installed, if you install it, the simulations might go faster"
     main()
