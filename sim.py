@@ -99,7 +99,7 @@ class ElectionSim(object):
             else:
                 idx = 1
             self.state_widgets[name][idx].set_sensitive(True)
-            self.state_widgets[name][0].set_value(50)
+            self.state_widgets[name][0].set_value(self.wTree.get_widget('overall_slider').get_value())
             self.state_widgets[name][0].set_sensitive(True)
     
     def overall_changed(self, widget):
