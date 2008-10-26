@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import pickle
+from processing import Process, Pipe
 import random
 
 import gobject
@@ -10,18 +11,46 @@ import pygtk
 
 from states import STATES
 
+SIMULATION_COUNT = 5000
+
+class Updater(Process):
+    def __init__(self, pipe):
+        Process.__init__(self)
+        self.pipe = pipe
+    
+    def run(self):
+        while True:
+            state_status = self.pipe.recv()
+            while self.pipe.poll():
+               state_status = self.pipe.recv()
+            cand_wins = [0, 0]
+            for i in xrange(SIMULATION_COUNT):
+                obama_votes = 0
+                for state, status in state_status.iteritems():
+                    votes = STATES[state][1]
+                    if status > random.uniform(0, 100):
+                        obama_votes += votes
+                if obama_votes >= 270:
+                    cand_wins[0] += 1
+                if obama_votes < 269:
+                    cand_wins[1] += 1
+            self.pipe.send(cand_wins)
+
 class ElectionSim(object):
     def __init__(self):
-        self.SIMULATION_COUNT = 500
         self.update = True
-        
         self.gladefile = 'election.glade'
         self.wTree = gtk.glade.XML(self.gladefile, 'mainWindow')
         
         self.wTree.signal_autoconnect(self)
         self.wTree.get_widget('mainWindow').set_icon_from_file('obama.gif')
         self.init_widgets()
+        self.pipe, pipe = Pipe()
+        self.p = Updater(pipe)
+        self.p.start()
+        
         self.update_projection()
+        gobject.timeout_add(500, self.update_results)
     
     def init_widgets(self):
         self.state_table = self.wTree.get_widget('state_table')
@@ -64,21 +93,20 @@ class ElectionSim(object):
     def update_projection(self):
         if not self.update:
             return
-        cand_wins = [0, 0]
-        for i in xrange(self.SIMULATION_COUNT):
-            obama_votes = 0
-            for slider, obama_box, obama_label, mccain_box, mccain_label in self.state_widgets.itervalues():
-                name = '_'.join(slider.get_name().rsplit('_')[:-1])
-                val = slider.get_value()
-                votes = STATES[name][1]
-                if val > random.uniform(0, 100):
-                    obama_votes += votes
-            if obama_votes >= 270:
-                cand_wins[0] += 1
-            if obama_votes < 269:
-                cand_wins[1] += 1
-        self.wTree.get_widget('obama_count').set_text("%s%%" % int(100 * float(cand_wins[0])/self.SIMULATION_COUNT))
-        self.wTree.get_widget('mccain_count').set_text("%s%%" % int(100 * float(cand_wins[1])/self.SIMULATION_COUNT))
+        data = {}
+        for slider, obama_box, obama_label, mccain_box, mccain_label in self.state_widgets.itervalues():
+            data['_'.join(slider.get_name().rsplit('_')[:-1])] = slider.get_value()
+        self.pipe.send(data)
+
+    def update_results(self):
+        while self.pipe.poll():
+            result = self.pipe.recv()
+        try:
+            self.wTree.get_widget('obama_count').set_text("%s%%" % int(100 * float(result[0])/SIMULATION_COUNT))
+            self.wTree.get_widget('mccain_count').set_text("%s%%" % int(100 * float(result[1])/SIMULATION_COUNT))
+        except NameError:
+            pass
+        return True
     
     def winner_determined(self, widget):
         name = '_'.join(widget.get_name().rsplit('_')[:-1])
@@ -143,15 +171,18 @@ class ElectionSim(object):
     
     def quit(self, *args, **kwargs):
         gtk.main_quit()
+        self.p.terminate()
 
 def main():
     app = ElectionSim()
     gtk.main()
 
 if __name__ == '__main__':
+    """
     try:
         import psyco
         psyco.full()
     except ImportError:
         print "Psyco isn't installed, if you install it, the simulations might go faster"
+    """
     main()
