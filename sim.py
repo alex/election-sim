@@ -142,6 +142,7 @@ class ElectionSim(object):
     
     def reset(self, widget):
         self.update = False
+        self.wTree.get_widget('overall_slider').set_value(50)
         for slider, obama_box, obama_label, mccain_box, mccain_label in self.state_widgets.itervalues():
             slider.set_sensitive(True)
             slider.set_value(50)
@@ -177,11 +178,9 @@ def main():
     gtk.main()
 
 if __name__ == '__main__':
-    """
     try:
         import psyco
         psyco.full()
     except ImportError:
         print "Psyco isn't installed, if you install it, the simulations might go faster"
-    """
     main()
