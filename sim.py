@@ -99,13 +99,12 @@ class ElectionSim(object):
         self.pipe.send(data)
 
     def update_results(self):
+        if not self.pipe.poll():
+            return True
         while self.pipe.poll():
             result = self.pipe.recv()
-        try:
-            self.wTree.get_widget('obama_count').set_text("%s%%" % int(100 * float(result[0])/SIMULATION_COUNT))
-            self.wTree.get_widget('mccain_count').set_text("%s%%" % int(100 * float(result[1])/SIMULATION_COUNT))
-        except NameError:
-            pass
+        self.wTree.get_widget('obama_count').set_text("%s%%" % int(100 * float(result[0])/SIMULATION_COUNT))
+        self.wTree.get_widget('mccain_count').set_text("%s%%" % int(100 * float(result[1])/SIMULATION_COUNT))
         return True
     
     def winner_determined(self, widget):
