@@ -50,7 +50,7 @@ class ElectionSim(object):
         self.p.start()
         
         self.update_projection()
-        gobject.timeout_add(500, self.update_results)
+        gobject.idle_add(self.update_results)
     
     def init_widgets(self):
         self.state_table = self.wTree.get_widget('state_table')
