@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 import pickle
-from processing import Process, Pipe
+try:
+    from processing import Process, Pipe
+except ImportError:
+    from multiprocessing import Process, Pipe
 import random
 
 import gobject
@@ -15,7 +18,7 @@ SIMULATION_COUNT = 5000
 
 class Updater(Process):
     def __init__(self, pipe):
-        Process.__init__(self)
+        super(Updater, self).__init__()
         self.pipe = pipe
     
     def run(self):
