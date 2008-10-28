@@ -14,7 +14,7 @@ import pygtk
 
 from states import STATES
 
-SIMULATION_COUNT = 5000
+SIMULATION_COUNT = 10000
 
 class Updater(Process):
     def __init__(self, pipe):
