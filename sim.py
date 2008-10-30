@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+import os
 import pickle
 try:
-    from processing import Process, Pipe
+    from processing import Process, Pipe, freezeSupport
 except ImportError:
-    from multiprocessing import Process, Pipe
+    from multiprocessing import Process, Pipe, freezeSupport
 import random
 
 import gobject
@@ -49,6 +50,8 @@ class ElectionSim(object):
         self.wTree.get_widget('mainWindow').set_icon_from_file('obama.gif')
         self.init_widgets()
         self.pipe, pipe = Pipe()
+        if os.name == 'nt':
+            freezeSupport()
         self.p = Updater(pipe)
         self.p.start()
         
