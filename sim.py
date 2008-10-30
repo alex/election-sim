@@ -3,9 +3,9 @@
 import os
 import pickle
 try:
-    from processing import Process, Pipe, freezeSupport
+    from processing import Process, Pipe
 except ImportError:
-    from multiprocessing import Process, Pipe, freezeSupport
+    from multiprocessing import Process, Pipe
 import random
 
 import gobject
@@ -15,6 +15,12 @@ import pygtk
 
 from states import STATES
 
+if os.name == 'nt':
+    try:
+        from processing import freezeSupport
+    except ImportError:
+        from multiprocessing import freezeSupport
+    
 SIMULATION_COUNT = 10000
 
 class Updater(Process):
